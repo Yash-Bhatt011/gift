@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period Tracker - Made with Love</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b9d;
+            --secondary-color: #f8a5c2;
+            --accent-color: #ffd93d;
+            --text-color: #2c3e50;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --love-gradient: linear-gradient(135deg, #ff6b9d 0%, #feca57 50%, #ff9ff3 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            margin: 20px auto;
+            max-width: 500px;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: var(--love-gradient);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-section {
+            padding: 30px 25px;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--love-gradient);
+            border: none;
+            padding: 15px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+        }
+
+        .result-card {
+            background: var(--love-gradient);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.3);
+            transform: scale(0) rotate(-5deg);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .result-card.show {
+            transform: scale(1) rotate(0deg);
+        }
+
+        .next-period-date {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 20px 0;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .days-remaining {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-top: 15px;
+        }
+
+        .memory-section {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(248, 165, 194, 0.1));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 3px solid rgba(255, 107, 157, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-quotes {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-text {
+            font-style: italic;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 6s linear infinite;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+
+        .love-message {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+            border-left: 5px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tabs {
+            border: none;
+            margin-bottom: 25px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--text-color);
+            border-radius: 25px !important;
+            margin: 0 5px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--love-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mood-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .mood-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .notes-textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(255, 107, 157, 0.2);
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-section {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <div class="header">
+                <h1><i class="fas fa-heart"></i> <span id="titleText">Period Tracker</span></h1>
+                <p class="subtitle" id="subtitleText">Made with love, care, and countless thoughts of you ✨</p>
+                <!-- Language Switcher -->
+                <div style="position:absolute; top:15px; right:20px;">
+                    <select id="langSwitch" class="form-select form-select-sm" style="width:auto; display:inline-block;">
+                        <option value="en">English</option>
+                        <option value="gu">ગુજરાતી</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tracker-tab" data-bs-toggle="tab" data-bs-target="#tracker" type="button">
+                            <i class="fas fa-calculator"></i> Tracker
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="memories-tab" data-bs-toggle="tab" data-bs-target="#memories" type="button">
+                            <i class="fas fa-heart"></i> Memories
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="journal-tab" data-bs-toggle="tab" data-bs-target="#journal" type="button">
+                            <i class="fas fa-book"></i> Journal
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="tracker" role="tabpanel">
+                        <div class="input-group">
+                            <label for="lastPeriod" class="form-label" id="lastPeriodLabel">
+                                <i class="fas fa-calendar-alt"></i>
+                                Last Period Start Date
+                            </label>
+                            <input type="date" id="lastPeriod" class="form-control" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="cycleLength" class="form-label" id="cycleLengthLabel">
+                                <i class="fas fa-clock"></i>
+                                Cycle Length (days)
+                            </label>
+                            <input type="number" id="cycleLength" class="form-control" value="28" min="21" max="35" required>
+                            <small class="form-text text-muted" id="cycleLengthHint">Average cycle is 28 days (21-35 is normal)</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="periodDuration" class="form-label" id="periodDurationLabel">
+                                <i class="fas fa-tint"></i>
+                                How many days did your period last?
+                            </label>
+                            <input type="number" id="periodDuration" class="form-control" value="5" min="2" max="10" required>
+                            <small class="form-text text-muted" id="periodDurationHint">Average period lasts 3-7 days</small>
+                        </div>
+
+                        <button onclick="calculateNextPeriod()" class="btn btn-primary w-100" id="calcBtn">
+                            <i class="fas fa-calculator"></i> Calculate Next Period
+                        </button>
+
+                        <div id="result" class="result-card">
+                            <h3><i class="fas fa-calendar-check"></i> <span id="resultTitle">Your Next Period</span></h3>
+                            <div class="next-period-date" id="nextPeriodDate"></div>
+                            <div class="days-remaining" id="daysRemaining"></div>
+                            <div class="days-remaining" id="periodEndDate"></div>
+                        </div>
+
+                        <div style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px; margin: 15px 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                            <h4><i class="fas fa-heart"></i> Gentle Reminders</h4>
+                            <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                💝 Remember: You're stronger than you know, and every day you handle this with grace is a testament to your incredible strength.
+                            </div>
+                            <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                🌸 Take care of yourself today - you deserve all the love and comfort in the world.
+                            </div>
+                            <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                ✨ Someone, somewhere, is thinking of you and sending you positive energy right now.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="memories" role="tabpanel">
+                        <div class="memory-section">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--love-gradient); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: white;">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h4 style="text-align: center; margin-bottom: 20px;">
+                                <i class="fas fa-heart"></i> Special Messages Just For You
+                            </h4>
+                            
+                            <div class="memory-quotes">
+                                <p class="quote-text" id="currentQuote">Click below to see a special message ✨</p>
+                            </div>
+                            
+                            <button onclick="showRandomMemory()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 15px 25px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; width: 100%;">
+                                <i class="fas fa-gift"></i> Show Me Love
+                            </button>
+
+                            <div style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px; margin: 15px 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                                <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                    💕 "Every time you use this app, know that it was made with countless thoughts of your smile and wellbeing."
+                                </div>
+                                <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                    🌸 "Your strength inspires me every day. This is my way of taking care of you from afar."
+                                </div>
+                                <div style="padding: 15px; margin: 10px 0; background: rgba(255, 107, 157, 0.1); border-radius: 10px; border-left: 4px solid var(--primary-color); font-style: italic;">
+                                    ✨ "Distance means nothing when someone means everything. You're always in my thoughts."
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="journal" role="tabpanel">
+                        <div style="background: rgba(255, 255, 255, 0.9); border-radius: 12px; padding: 20px; margin-top: 20px;">
+                            <h4><i class="fas fa-smile"></i> How are you feeling today?</h4>
+                            <div class="mood-options">
+                                <button class="mood-btn" onclick="selectMood(this, 'happy')">😊</button>
+                                <button class="mood-btn" onclick="selectMood(this, 'okay')">😌</button>
+                                <button class="mood-btn" onclick="selectMood(this, 'tired')">😴</button>
+                                <button class="mood-btn" onclick="selectMood(this, 'sad')">😢</button>
+                                <button class="mood-btn" onclick="selectMood(this, 'love')">🥰</button>
+                            </div>
+                            <div id="moodMessage" style="margin-top: 15px; text-align: center; font-style: italic;"></div>
+                        </div>
+
+                        <div style="background: rgba(255, 255, 255, 0.9); border-radius: 12px; padding: 20px; margin-top: 20px;">
+                            <h4><i class="fas fa-pen"></i> Personal Notes</h4>
+                            <textarea class="notes-textarea" id="personalNotes" placeholder="Write your thoughts here... This space is just for you 💕"></textarea>
+                            <button onclick="saveNotes()" class="btn btn-primary w-100 mt-2">
+                                <i class="fas fa-save"></i> Save My Thoughts
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="love-message">
+                    <p><i class="fas fa-heart"></i> Every detail of this app was crafted with love and care, thinking of your comfort and wellbeing. You're cherished and never forgotten. 💕</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set today's date as max for the date input
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('lastPeriod').max = today;
+            generateFloatingHearts();
+        });
+
+        // Special memories and quotes (English & Gujarati)
+        const specialMemories = {
+            en: [
+                "💝 Every time you use this app, remember that someone, somewhere is thinking of you with love and care.",
+                "🌸 Your strength amazes me every single day. This is my way of being there for you.",
+                "✨ Distance means nothing when someone means everything. You're always in my heart.",
+                "💕 You deserve all the comfort and care in the world. This app is my love letter to your wellbeing.",
+                "🌙 Even when we're apart, I want you to feel supported and prepared for everything.",
+                "💖 Your happiness is my priority, even from afar. Take care of yourself, beautiful.",
+                "🌸 Remember: you're stronger than you know, and more loved than you realize.",
+                "💫 Every feature here was designed with your comfort in mind. You're never alone.",
+                "🌹 Your smile lights up my world. I hope this brings a little light to yours.",
+                "💝 This isn't just an app - it's a hug in digital form, made just for you."
+            ],
+            gu: [
+                "💝 જ્યારે તમે આ એપ ઉપયોગ કરો છો, ત્યારે જાણો કે કોઈક, ક્યાંક તમને પ્રેમ અને કાળજીથી યાદ કરે છે.",
+                "🌸 તમારી શક્તિ મને દરરોજ આશ્ચર્યચકિત કરે છે. આ મારું તમારી માટે હોવાનો એક રીત છે.",
+                "✨ અંતરનો કોઈ અર્થ નથી જ્યારે કોઈ વ્યક્તિ બધું છે. તમે હંમેશા મારા દિલમાં છો.",
+                "💕 તમે દુનિયાની બધી આરામ અને કાળજી લાયક છો. આ એપ તમારા કલ્યાણ માટે મારી પ્રેમભરી ભેટ છે.",
+                "🌙 જ્યારે આપણે દૂર હોઈએ, ત્યારે પણ હું ઈચ્છું છું કે તમે તૈયાર અને સહાય અનુભવો.",
+                "💖 તમારું આનંદ પણ દૂરથી મારી પ્રાથમિકતા છે. પોતાનું ધ્યાન રાખો, સુંદર.",
+                "🌸 યાદ રાખો: તમે જેટલા મજબૂત છો, એટલા પ્રેમભર્યા છો.",
+                "💫 અહીંની દરેક સુવિધા તમારી આરામ માટે રચાઈ છે. તમે ક્યારેય એકલા નથી.",
+                "🌹 તમારું સ્મિત મારી દુનિયાને પ્રકાશિત કરે છે. આશા છે કે આ તમારી દુનિયામાં પ્રકાશ લાવે.",
+                "💝 આ માત્ર એપ નથી - એ ડિજિટલ સ્વરૂપમાં એક હગ છે, ખાસ તમારા માટે."
+            ]
+        };
+
+        // Mood messages (English & Gujarati)
+        const moodMessages = {
+            en: {
+                happy: "Your happiness makes the world brighter! Keep shining, beautiful! ✨",
+                okay: "It's okay to have okay days. You're still amazing just as you are! 🤗",
+                tired: "Rest is not weakness, it's wisdom. Be gentle with yourself today. 💤",
+                sad: "It's okay to feel sad. You're human, and you're loved no matter what. 🫂",
+                love: "Your heart is so beautiful. Thank you for being you! 💕"
+            },
+            gu: {
+                happy: "તમારો આનંદ દુનિયાને વધુ તેજસ્વી બનાવે છે! ચમકતા રહો, સુંદર! ✨",
+                okay: "ઠીક-ઠીક દિવસો હોવું સામાન્ય છે. તમે જેમ છો તેમ જ અદ્ભુત છો! 🤗",
+                tired: "વિશ્વાસ રાખો, આરામ કમજોરી નથી, એ સમજદારી છે. આજે પોતાને નરમ રાખો. 💤",
+                sad: "ઉદાસ થવું પણ ઠીક છે. તમે માનવી છો અને તમે હંમેશા પ્રેમભર્યા છો. 🫂",
+                love: "તમારું દિલ ખૂબ સુંદર છે. તમે એવા છો તેના માટે આભાર! 💕"
+            }
+        };
+
+        // UI translations (add more as needed)
+        const translations = {
+            en: {
+                title: "Period Tracker",
+                subtitle: "Made with love, care, and countless thoughts of you ✨",
+                lastPeriod: "Last Period Start Date",
+                cycleLength: "Cycle Length (days)",
+                cycleHint: "Average cycle is 28 days (21-35 is normal)",
+                periodDuration: "How many days did your period last?",
+                periodHint: "Average period lasts 3-7 days",
+                calcBtn: "Calculate Next Period",
+                resultTitle: "Your Next Period",
+                starts: "Starts: ",
+                ends: "Expected to end: ",
+                lasts: "Lasts ",
+                days: " days",
+                daysToGo: " days to go",
+                startToday: "Your period should start today",
+                started: "Your period may have already started or will start very soon",
+                showLoveBtn: "Show Me Love",
+                specialMsgTitle: "Special Messages Just For You",
+                clickForMsg: "Click below to see a special message ✨",
+                gentleReminders: "Gentle Reminders",
+                reminder1: "💝 Remember: You're stronger than you know, and every day you handle this with grace is a testament to your incredible strength.",
+                reminder2: "🌸 Take care of yourself today - you deserve all the love and comfort in the world.",
+                reminder3: "✨ Someone, somewhere, is thinking of you and sending you positive energy right now.",
+                journalMood: "How are you feeling today?",
+                journalNotes: "Personal Notes",
+                notesPlaceholder: "Write your thoughts here... This space is just for you 💕",
+                saveThoughts: "Save My Thoughts",
+                thoughtsSaved: "<i class='fas fa-check'></i> Your thoughts have been saved safely ✨",
+                loveMessage: "<i class='fas fa-heart'></i> Every detail of this app was crafted with love and care, thinking of your comfort and wellbeing. You're cherished and never forgotten. 💕"
+            },
+            gu: {
+                title: "પિરિયડ ટ્રેકર",
+                subtitle: "પ્રેમ અને કાળજીથી બનાવેલ, તમારી યાદમાં ✨",
+                lastPeriod: "છેલ્લા પિરિયડની શરૂઆતની તારીખ",
+                cycleLength: "સાયકલની લંબાઈ (દિવસ)",
+                cycleHint: "સરેરાશ સાયકલ 28 દિવસ છે (21-35 સામાન્ય છે)",
+                periodDuration: "પિરિયડ કેટલા દિવસ ચાલ્યા?",
+                periodHint: "સરેરાશ પિરિયડ 3-7 દિવસ ચાલે છે",
+                calcBtn: "આગામી પિરિયડ ગણો",
+                resultTitle: "તમારો આગલો પિરિયડ",
+                starts: "શરૂઆત: ",
+                ends: "અંત: ",
+                lasts: "ચાલશે ",
+                days: " દિવસ",
+                daysToGo: " દિવસ બાકી",
+                startToday: "આજે તમારો પિરિયડ શરૂ થવો જોઈએ",
+                started: "તમારો પિરિયડ શરૂ થઈ ગયો હશે અથવા ટૂંક સમયમાં શરૂ થશે",
+                showLoveBtn: "પ્રેમ દર્શાવો",
+                specialMsgTitle: "ખાસ સંદેશો માત્ર તમારા માટે",
+                clickForMsg: "ખાસ સંદેશ જોવા માટે નીચે ક્લિક કરો ✨",
+                gentleReminders: "નાજુક યાદો",
+                reminder1: "💝 યાદ રાખો: તમે જેટલા મજબૂત છો, અને દરરોજ તમે જે રીતે સંભાળો છો એ તમારી અદ્ભુત શક્તિનું પ્રમાણ છે.",
+                reminder2: "🌸 આજે પોતાનું ધ્યાન રાખો - તમે દુનિયાની બધી પ્રેમ અને આરામ લાયક છો.",
+                reminder3: "✨ કોઈક, ક્યાંક, તમને યાદ કરે છે અને હમણાં જ સકારાત્મક ઊર્જા મોકલે છે.",
+                journalMood: "આજે તમે કેવી રીતે અનુભવો છો?",
+                journalNotes: "વ્યક્તિગત નોંધો",
+                notesPlaceholder: "તમારા વિચારો અહીં લખો... આ જગ્યા માત્ર તમારા માટે છે 💕",
+                saveThoughts: "મારા વિચારો સાચવો",
+                thoughtsSaved: "<i class='fas fa-check'></i> તમારા વિચારો સુરક્ષિત રીતે સાચવવામાં આવ્યા છે ✨",
+                loveMessage: "<i class='fas fa-heart'></i> આ એપનો દરેક ભાગ પ્રેમ અને કાળજીથી બનાવવામાં આવ્યો છે, તમારા આરામ અને કલ્યાણ માટે. તમે હંમેશા યાદ રાખો છો. 💕"
+            }
+        };
+
+        let currentLang = "en";
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.getElementById('titleText').textContent = t.title;
+            document.getElementById('subtitleText').textContent = t.subtitle;
+            document.getElementById('lastPeriodLabel').childNodes[2].textContent = t.lastPeriod;
+            document.getElementById('cycleLengthLabel').childNodes[2].textContent = t.cycleLength;
+            document.getElementById('cycleLengthHint').textContent = t.cycleHint;
+            document.getElementById('periodDurationLabel').childNodes[2].textContent = t.periodDuration;
+            document.getElementById('periodDurationHint').textContent = t.periodHint;
+            document.getElementById('calcBtn').innerHTML = '<i class="fas fa-calculator"></i> ' + t.calcBtn;
+            document.getElementById('resultTitle').textContent = t.resultTitle;
+            // Memories tab
+            document.querySelector('#memories h4').innerHTML = `<i class="fas fa-heart"></i> ${t.specialMsgTitle}`;
+            document.getElementById('currentQuote').textContent = t.clickForMsg;
+            document.querySelector('#memories button').innerHTML = `<i class="fas fa-gift"></i> ${t.showLoveBtn}`;
+            // Reminders
+            document.querySelector('#tracker h4').innerHTML = `<i class="fas fa-heart"></i> ${t.gentleReminders}`;
+            const reminders = document.querySelectorAll('#tracker > div[style*="background: rgba(255, 255, 255"] > div');
+            reminders[0].innerHTML = t.reminder1;
+            reminders[1].innerHTML = t.reminder2;
+            reminders[2].innerHTML = t.reminder3;
+            // Journal tab
+            document.querySelector('#journal h4').innerHTML = `<i class="fas fa-smile"></i> ${t.journalMood}`;
+            document.querySelector('#journal > div:nth-child(2) h4').innerHTML = `<i class="fas fa-pen"></i> ${t.journalNotes}`;
+            document.getElementById('personalNotes').placeholder = t.notesPlaceholder;
+            document.querySelector('#journal > div:nth-child(2) button').innerHTML = `<i class="fas fa-save"></i> ${t.saveThoughts}`;
+            // Love message
+            document.querySelector('.love-message p').innerHTML = t.loveMessage;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ...existing code...
+            setLanguage(currentLang);
+            document.getElementById('langSwitch').addEventListener('change', function(e) {
+                setLanguage(e.target.value);
+            });
+        });
+
+        function calculateNextPeriod() {
+            const lastPeriodInput = document.getElementById('lastPeriod');
+            const cycleLengthInput = document.getElementById('cycleLength');
+            const periodDurationInput = document.getElementById('periodDuration');
+            const resultDiv = document.getElementById('result');
+            const nextPeriodDateDiv = document.getElementById('nextPeriodDate');
+            const daysRemainingDiv = document.getElementById('daysRemaining');
+            const periodEndDateDiv = document.getElementById('periodEndDate');
+
+            if (!lastPeriodInput.value || !cycleLengthInput.value || !periodDurationInput.value) {
+                alert('Please fill in all fields to calculate your next period.');
+                return;
+            }
+
+            const lastPeriodDate = new Date(lastPeriodInput.value);
+            const cycleLength = parseInt(cycleLengthInput.value);
+            const periodDuration = parseInt(periodDurationInput.value);
+            const today = new Date();
+
+            // Next period start date
+            const nextPeriodDate = new Date(lastPeriodDate);
+            nextPeriodDate.setDate(lastPeriodDate.getDate() + cycleLength);
+
+            // Next period end date
+            const nextPeriodEndDate = new Date(nextPeriodDate);
+            nextPeriodEndDate.setDate(nextPeriodDate.getDate() + periodDuration - 1);
+
+            const timeDifference = nextPeriodDate - today;
+            const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+            const t = translations[currentLang];
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const formattedDate = nextPeriodDate.toLocaleDateString('en-US', options);
+            const formattedEndDate = nextPeriodEndDate.toLocaleDateString('en-US', options);
+
+            nextPeriodDateDiv.textContent = t.starts + formattedDate;
+            
+            if (daysRemaining > 0) {
+                daysRemainingDiv.innerHTML = '<i class="fas fa-hourglass-half"></i> ' + daysRemaining + t.daysToGo;
+            } else if (daysRemaining === 0) {
+                daysRemainingDiv.innerHTML = '<i class="fas fa-calendar-day"></i> ' + t.startToday;
+            } else {
+                daysRemainingDiv.innerHTML = '<i class="fas fa-info-circle"></i> ' + t.started;
+            }
+            
+            // Show period end date
+            periodEndDateDiv.innerHTML = '<i class="fas fa-calendar-check"></i> ' + t.ends + formattedEndDate + ' <br> (' + t.lasts + periodDuration + t.days + ')';
+
+            resultDiv.classList.add('show');
+            createFloatingHearts();
+        }
+
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('floatingHearts');
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = '💖';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heartsContainer.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 6000);
+                }, i * 200);
+            }
+        }
+
+        function generateFloatingHearts() {
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = '💕';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.fontSize = '12px';
+                    heart.style.animationDuration = '8s';
+                    document.getElementById('floatingHearts').appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 8000);
+                }
+            }, 10000);
+        }
+
+        function showRandomMemory() {
+            const msgs = specialMemories[currentLang];
+            const randomMemory = msgs[Math.floor(Math.random() * msgs.length)];
+            const quoteElement = document.getElementById('currentQuote');
+            quoteElement.style.opacity = '0';
+            setTimeout(() => {
+                quoteElement.textContent = randomMemory;
+                quoteElement.style.opacity = '1';
+                createFloatingHearts();
+            }, 300);
+        }
+
+        function selectMood(button, mood) {
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            const messageDiv = document.getElementById('moodMessage');
+            messageDiv.textContent = moodMessages[currentLang][mood];
+            messageDiv.style.opacity = '0';
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+            }, 100);
+            createFloatingHearts();
+        }
+
+        function saveNotes() {
+            const t = translations[currentLang];
+            const notes = document.getElementById('personalNotes').value;
+            const savedDiv = document.createElement('div');
+            savedDiv.style.cssText = 'color: green; margin-top: 10px; text-align: center;';
+            savedDiv.innerHTML = t.thoughtsSaved;
+            document.getElementById('personalNotes').parentNode.appendChild(savedDiv);
+            setTimeout(() => {
+                savedDiv.remove();
+            }, 3000);
+            createFloatingHearts();
+        }
+    </script>
+</body>
+</html>
